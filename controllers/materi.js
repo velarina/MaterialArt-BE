@@ -1,4 +1,4 @@
-const materi = require("../materi");
+const materi = require("../models/materi");
 
 module.exports = {
   data: async (_req, res) => {
@@ -49,15 +49,21 @@ module.exports = {
   },
   store: async (req, res) => {
     try {
+      var url =
+        req.protocol +
+        "://" +
+        req.get("host") +
+        "/images/" +
+        req.body.imgOrganisasi;
       const materis = await materi.create({
-        Title: req.body.Title,
-        Definisi: req.body.Definisi,
-        Lapangan: req.body.Lapangan,
-        Juri: req.body.Juri,
-        Seragam: req.body.Seragam,
-        WaktuSkor: req.body.WaktuSkor,
-        Teknik: req.body.Teknik,
-        Organisasi: req.body.Organisasi,
+        title: req.body.title,
+        pengertian: req.body.pengertian,
+        sejarah: req.body.sejarah,
+        manfaat: req.body.manfaat,
+        seragam: req.body.seragam,
+        waktu: req.body.waktu,
+        imgOrganisasi: url,
+        videoTeknik: req.body.videoTeknik,
       });
       res.status(201).json({
         status: 201,
@@ -68,17 +74,36 @@ module.exports = {
       console.log(error);
       res.status(500).json({
         status: 500,
-        message: error.body,
+        message: error.message,
         data: null,
       });
     }
   },
   update: async (req, res) => {
-    const materis = await materi.update(req.body, {
-      where: {
-        id: req.params.id,
+    var url =
+      req.protocol +
+      "://" +
+      req.get("host") +
+      "/images/" +
+      req.body.imgOrganisasi;
+    console.log("type of:", req.body.title);
+    const materis = await materi.update(
+      {
+        title: req.body.title,
+        pengertian: req.body.pengertian,
+        sejarah: req.body.sejarah,
+        manfaat: req.body.manfaat,
+        seragam: req.body.seragam,
+        waktu: req.body.waktu,
+        imgOrganisasi: url,
+        videoTeknik: req.body.videoTeknik,
       },
-    });
+      {
+        where: {
+          id: req.params.id,
+        },
+      }
+    );
     if (materis == null) {
       res.status(404).json({
         status: 404,

@@ -1,5 +1,5 @@
 const { Sql, DataTypes } = require("sequelize");
-const database = require("./config/database");
+const database = require("../config/database");
 
 const materi = database.define("materi", {
   id: {
@@ -8,35 +8,35 @@ const materi = database.define("materi", {
     autoIncrement: true,
     primaryKey: true,
   },
-  Title: {
+  title: {
     type: DataTypes.STRING,
     allowNull: false,
   },
-  Pengertian: {
+  pengertian: {
     type: DataTypes.STRING,
     allowNull: false,
   },
-  Sejarah: {
+  sejarah: {
     type: DataTypes.STRING,
     allowNull: false,
   },
-  Manfaat: {
+  manfaat: {
     type: DataTypes.STRING,
     allowNull: false,
   },
-  Seragam: {
+  seragam: {
     type: DataTypes.STRING,
     allowNull: false,
   },
-  Waktu: {
+  waktu: {
     type: DataTypes.STRING,
     allowNull: false,
   },
-  ImgOrganisasi: {
+  imgOrganisasi: {
     type: DataTypes.STRING,
     allowNull: false,
   },
-  VideoTeknik: {
+  videoTeknik: {
     type: DataTypes.STRING,
     allowNull: false,
   },
@@ -50,3 +50,5 @@ materi
   .catch((error) => {
     console.error("unnable to creat table", +error);
   });
+
+module.exports = materi;
