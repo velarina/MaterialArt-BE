@@ -1,116 +1,147 @@
-const db = require("../models");
-const Quiz = db.tryuskk4;
+const quiz = require("../models/quiz");
+const Quiz = quiz.tryuskk4;
 
-//CREATE: untuk menambahkan data ke dalam tabel quiz
-exports.create = async (req, res) => {
-  try {
-    const data = await Quiz.create(req.body);
-    res.json({
-      message: "asik, data berhasil ditambahkan",
-      data: data,
+module.exports = {
+  data: async (_req, res) => {
+    try {
+      const quizes = await quiz.findAll();
+      res.status(200).json({
+        status: 200,
+        message: "data succesfully sent",
+        data: quizes,
+      });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({
+        status: 500,
+        message: error,
+        data: null,
+      });
+    }
+  },
+  index: async (req, res) => {
+    try {
+      const quizes = await quiz.findOne({
+        where: {
+          category: req.params.id,
+        },
+      });
+      if (quiz == null) {
+        res.status(404).json({
+          status: 404,
+          message: "data not found",
+          data: null,
+        });
+      } else {
+        res.status(200).json({
+          status: 200,
+          message: "data succesfully sent",
+          data: quizes,
+        });
+      }
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({
+        status: 500,
+        message: error.body,
+        data: null,
+      });
+    }
+  },
+  category: async (req, res) => {
+    try {
+      const quizes = await quiz.findAll({
+        where: {
+          category: req.params.id,
+        },
+      });
+      console.log("quizes:", quizes);
+      if (quiz == null) {
+        res.status(404).json({
+          status: 404,
+          message: "data not found",
+          data: null,
+        });
+      } else {
+        res.status(200).json({
+          status: 200,
+          message: "data succesfully sent",
+          data: quizes,
+        });
+      }
+    } catch (error) {
+      console.error(error);
+      console.log("category:", req.params.category);
+      res.status(500).json({
+        status: 500,
+        message: error.message,
+        data: null,
+      });
+    }
+  },
+  //CREATE: untuk menambahkan data ke dalam tabel quiz
+  store: async (req, res) => {
+    try {
+      console.log(req.body);
+      const quizes = await quiz.create({
+        question: req.body.question,
+        a: req.body.a,
+        b: req.body.b,
+        c: req.body.c,
+        d: req.body.d,
+        key: req.body.key,
+        category: req.body.category,
+      });
+      res.status(201).json({
+        status: 201,
+        message: "data succesfully created",
+        data: quizes,
+      });
+    } catch (error) {
+      console.log(error);
+      res.status(500).json({
+        status: 500,
+        message: error.message,
+        data: null,
+      });
+    }
+  },
+  update: async (req, res) => {
+    const quizes = await quiz.update(req.body, {
+      where: {
+        id: req.params.id,
+      },
     });
-  } catch (error) {
-    res.status(500).json({
-      message: error.message,
-      data: null,
+    if (quizes == null) {
+      res.status(404).json({
+        status: 404,
+        message: "data not found",
+        data: null,
+      });
+    } else {
+      res.status(200).json({
+        status: 200,
+        message: "data successfully updated",
+      });
+    }
+  },
+  delete: async (req, res) => {
+    const quizes = quiz.destroy({
+      where: {
+        id: req.params.id,
+      },
     });
-  }
-};
-
-//READ: menampilkan atau mengambil semua data quiz sesuai model dari darabase
-exports.getAll = async (req, res) => {
-  try {
-    const quizzes = await Quiz.findAll();
-    res.json({
-      message: "Quizzes retrivied successfully",
-      data: quizzes,
-    });
-  } catch (error) {
-    res.status(500).json({
-      message: error.message,
-      data: null,
-    });
-  }
-};
-
-// Mengubah data sesuai id yang dikirimkan
-exports.update = async (req, res) => {
-  const id = req.params.id;
-  try {
-    const quiz = await Quiz.findByPk(id, { rejectOnEmpty: true });
-    quiz.update(req.body, {
-      where: { id },
-    });
-    res.json({
-      message: "Quizzes updated seccessfully",
-      data: quiz,
-    });
-  } catch (error) {
-    res.status(500).json({
-      message: error.message || "Some error occurred while retrieving quiz",
-      data: null,
-    });
-  }
-};
-
-// Menghapus data sesuai id yang dikirimkan
-exports.delete = async (req, res) => {
-  const id = req.params.id;
-  try {
-    const quiz = await Quiz.findByPk(id, { rejecyOnEmpty: true });
-    quiz.destroy();
-    res.json({
-      message: "Quiz deleted successfully",
-    });
-  } catch (error) {
-    res.status(500).json({
-      message: error.message || "Some error occurred while retrieving quiz",
-      data: null,
-    });
-  }
-};
-
-//Mengambil data sesuai id yang dikirimkan
-exports.findOne = async (req, res) => {
-  const id = req.params.id;
-  try {
-    const quiz = await Quiz.findByPk(id, { rejectOnEmpty: true });
-    res.json({
-      message: `Quizzes retrieved successfully with id=${id}`,
-      data: quiz,
-    });
-  } catch (error) {
-    res.status(500).json({
-      message: error.message || "Some error occurred while retrieving quiz",
-      data: null,
-    });
-  }
-};
-
-//Menampilkan atau mengambil semua data quiz berdasarkan category tertentu
-exports.getByCategoryId = async (req, res) => {
-  const id = req.params.id;
-  const quizzes = await Quiz.findAll({
-    where: {
-      categoryId: id,
-    },
-  });
-  res.json({
-    message: `Quizzes retrieved successfully with categoryId=${id}`,
-    data: quizzes,
-  });
-};
-
-//Menampilkan atau mengambil semua data quiz berdasarkan level tertentu
-exports.getByLevelId = async (req, res) => {
-  const id = req.params.id;
-  const quizzes = await Quiz.findAll({
-    where: {
-      levelID: id,
-    },
-  });
-  res.json({
-    message: `Quizzes retrieved successfully with levelId=${id}`,
-    data: quizzes,
-  });
+    if (quizes == null) {
+      res.status(404).json({
+        status: 404,
+        message: "data not found",
+        data: null,
+      });
+    } else {
+      res.status(200).json({
+        status: 200,
+        message: "data successfully deleted",
+      });
+    }
+  },
 };
