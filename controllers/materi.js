@@ -49,12 +49,20 @@ module.exports = {
   },
   store: async (req, res) => {
     try {
-      var url =
+      var ImageUrl =
         req.protocol +
         "://" +
         req.get("host") +
         "/images/" +
         req.body.imgOrganisasi;
+
+      var VideoUrl =
+        req.protocol +
+        "://" +
+        req.get("host") +
+        "/videos/" +
+        req.body.videoTeknik;
+
       const materis = await materi.create({
         title: req.body.title,
         pengertian: req.body.pengertian,
@@ -62,8 +70,8 @@ module.exports = {
         manfaat: req.body.manfaat,
         seragam: req.body.seragam,
         waktu: req.body.waktu,
-        imgOrganisasi: url,
-        videoTeknik: req.body.videoTeknik,
+        imgOrganisasi: ImageUrl,
+        videoTeknik: VideoUrl,
       });
       res.status(201).json({
         status: 201,

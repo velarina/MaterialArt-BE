@@ -23,7 +23,7 @@ module.exports = {
     try {
       const quizes = await quiz.findOne({
         where: {
-          category: req.params.id,
+          id: req.params.id,
         },
       });
       if (quiz == null) {
